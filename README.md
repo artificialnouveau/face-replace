@@ -1,6 +1,6 @@
 # Python Face Anonymization Scripts
 
-This project includes six Python scripts for various face anonymization techniques. These scripts can anonymize faces in images using blurring, black bars, pixelation, face swapping, emoji replacement, and eye color replacement.
+This project includes six Python scripts for various face anonymization techniques. These scripts can anonymize faces in images using blurring, black bars, pixelation, face swapping, emoji replacement, and eye replacement.
 
 Each script can operate in two modes:
 
@@ -52,3 +52,6 @@ In addition to the scripts, a GUI application is provided for a more user-friend
 ```shell
 python app.py
 ```
+
+## Limitations
+These scripts are intended to serve as simple examples of face anonymization. They may not work well in all situations or for all images, especially in cases of non-frontal or partially occluded faces, faces with different expressions or accessories, or low-quality images.
