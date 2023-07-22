@@ -6,16 +6,22 @@ import cv2
 import os
 from tkinter import messagebox
 
-def anonymize_black_bar(input_folder, output_folder):
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
+def anonymize_black_bar(input_folder, output_folder, person_folder):
     for filename in os.listdir(input_folder):
         img = cv2.imread(os.path.join(input_folder, filename))
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        person_files = glob.glob(person_folder + "*.jpg")
 
-        for (x, y, w, h) in faces:
-            img[y:y+h, x:x+w] = [0, 0, 0]  # black color
+        if len(person_files) > 0:
+            for (x, y, w, h) in faces:
+                face = gray[y:y+h, x:x+w]
+                label, confidence = recognizer.predict(face)
+                if label == 0:
+                    img[y:y+h, x:x+w] = 0
+        else:
+            for (x, y, w, h) in faces:
+                img[y:y+h, x:x+w] = 0
 
         cv2.imwrite(os.path.join(output_folder, filename), img)
 
@@ -23,40 +29,55 @@ def anonymize_black_bar(input_folder, output_folder):
 
 
 # Pixelate Anonymization
-def anonymize_pixelate(input_folder, output_folder):
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
+def anonymize_pixelate(input_folder, output_folder, person_folder):
     for filename in os.listdir(input_folder):
         img = cv2.imread(os.path.join(input_folder, filename))
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        person_files = glob.glob(person_folder + "*.jpg")
 
-        for (x, y, w, h) in faces:
-            face = img[y:y+h, x:x+w]
-            face = cv2.resize(face, (16, 16))
-            face = cv2.resize(face, (w, h), interpolation=cv2.INTER_NEAREST)
-            img[y:y+h, x:x+w] = face
+        if len(person_files) > 0:
+            for (x, y, w, h) in faces:
+                face = gray[y:y+h, x:x+w]
+                label, confidence = recognizer.predict(face)
+                if label == 0:
+                    face = img[y:y+h, x:x+w]
+                    face = cv2.resize(cv2.resize(face, (16, 16)), (w, h), interpolation=cv2.INTER_NEAREST)
+                    img[y:y+h, x:x+w] = face
+        else:
+            for (x, y, w, h) in faces:
+                face = img[y:y+h, x:x+w]
+                face = cv2.resize(cv2.resize(face, (16, 16)), (w, h), interpolation=cv2.INTER_NEAREST)
+                img[y:y+h, x:x+w] = face
 
         cv2.imwrite(os.path.join(output_folder, filename), img)
+
 
     messagebox.showinfo('Information', 'Pixelation anonymization completed successfully.')
 
 
 # Blur Anonymization
-def anonymize_blur(input_folder, output_folder):
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
+def anonymize_blur(input_folder, output_folder, person_folder):
     for filename in os.listdir(input_folder):
         img = cv2.imread(os.path.join(input_folder, filename))
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+        person_files = glob.glob(person_folder + "*.jpg")
 
-        for (x, y, w, h) in faces:
-            face = img[y:y+h, x:x+w]
-            blurred_face = cv2.GaussianBlur(face, (99, 99), 30)
-            img[y:y+h, x:x+w] = blurred_face
+        if len(person_files) > 0:
+            for (x, y, w, h) in faces:
+                face = gray[y:y+h, x:x+w]
+                label, confidence = recognizer.predict(face)
+                if label == 0:  # If the face is recognized as the specific person
+                    face = cv2.GaussianBlur(face, (99, 99), 30)
+                    img[y:y+h, x:x+w] = face
+        else:
+            for (x, y, w, h) in faces:
+                face = cv2.GaussianBlur(img[y:y+h, x:x+w], (99, 99), 30)
+                img[y:y+h, x:x+w] = face
 
         cv2.imwrite(os.path.join(output_folder, filename), img)
+
 
     messagebox.showinfo('Information', 'Blur anonymization completed successfully.')
 
@@ -149,54 +170,55 @@ def anonymize_eye_color(input_folder, output_folder):
     messagebox.showinfo('Information', 'Eye color anonymization completed successfully.')
 
 
+from tkinter import *
+from tkinter import filedialog
+from anonymize_scripts import *
+
 class App:
     def __init__(self, root):
         self.root = root
         self.root.title('Face Anonymizer')
 
-        self.input_folder = None
-        self.output_folder = None
+        self.input_folder = StringVar()
+        self.output_folder = StringVar()
+        self.person_folder = StringVar()
 
-        self.methods = ['Black Bar', 'Pixelate', 'Blur', 'Face Swap', 'Emoji', 'Eye Color']
+        Label(self.root, text='Select the method').grid(row=0, column=0, padx=10, pady=10, sticky=W)
+        self.method = StringVar(self.root)
+        self.method.set('Black Bar')  # Default value
+        OptionMenu(self.root, self.method, 'Black Bar', 'Pixelate', 'Blur', 'Face Swap', 'Emoji', 'Eye Color').grid(row=0, column=1, padx=10, pady=10, sticky=W)
 
-        self.var = StringVar(self.root)
-        self.var.set(self.methods[0])
+        Button(self.root, text='Select input folder', command=self.select_input_folder).grid(row=1, column=0, padx=10, pady=10, sticky=W)
+        Button(self.root, text='Select output folder', command=self.select_output_folder).grid(row=2, column=0, padx=10, pady=10, sticky=W)
+        Button(self.root, text='Select person folder', command=self.select_person_folder).grid(row=3, column=0, padx=10, pady=10, sticky=W)
 
-        Label(self.root, text='Select method:').grid(row=0, column=0, padx=10, pady=10, sticky=W)
-        OptionMenu(self.root, self.var, *self.methods).grid(row=0, column=1, padx=10, pady=10, sticky=W+E)
-
-        Button(self.root, text='Select input folder', command=self.select_input_folder).grid(row=1, column=0, padx=10, pady=10, sticky=W+E)
-        Button(self.root, text='Select output folder', command=self.select_output_folder).grid(row=1, column=1, padx=10, pady=10, sticky=W+E)
-
-        Button(self.root, text='Run script', command=self.run_script).grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky=W+E)
+        Button(self.root, text='Run script', command=self.run_script).grid(row=4, column=0, padx=10, pady=10, sticky=W)
 
     def select_input_folder(self):
-        self.input_folder = filedialog.askdirectory()
+        self.input_folder.set(filedialog.askdirectory())
 
     def select_output_folder(self):
-        self.output_folder = filedialog.askdirectory()
+        self.output_folder.set(filedialog.askdirectory())
+    
+    def select_person_folder(self):
+        self.person_folder.set(filedialog.askdirectory())
 
     def run_script(self):
-        method = self.var.get()
-        if not self.input_folder or not self.output_folder:
-            messagebox.showwarning('Warning', 'Please select both input and output folders')
-        else:
-            if method == 'Black Bar':
-                anonymize_black_bar(self.input_folder, self.output_folder)
-            elif method == 'Pixelate':
-                anonymize_pixelate(self.input_folder, self.output_folder)
-            elif method == 'Blur':
-                anonymize_blur(self.input_folder, self.output_folder)
-            elif method == 'Face Swap':
-                anonymize_face_swap(self.input_folder, self.output_folder)
-            elif method == 'Emoji':
-                anonymize_emoji(self.input_folder, self.output_folder)
-            elif method == 'Eye Color':
-                anonymize_eye_color(self.input_folder, self.output_folder)
-            else:
-                messagebox.showwarning('Warning', f'Method {method} not implemented')
+        method = self.method.get()
+        if method == 'Black Bar':
+            anonymize_black_bar(self.input_folder.get(), self.output_folder.get(), self.person_folder.get())
+        elif method == 'Pixelate':
+            anonymize_pixelate(self.input_folder.get(), self.output_folder.get(), self.person_folder.get())
+        elif method == 'Blur':
+            anonymize_blur(self.input_folder.get(), self.output_folder.get(), self.person_folder.get())
+        elif method == 'Face Swap':
+            anonymize_face_swap(self.input_folder.get(), self.output_folder.get())
+        elif method == 'Emoji':
+            anonymize_emoji(self.input_folder.get(), self.output_folder.get(), self.person_folder.get())
+        elif method == 'Eye Color':
+            anonymize_eye_color(self.input_folder.get(), self.output_folder.get(), self.person_folder.get())
+
 
 root = Tk()
-app = App(root)
+App(root)
 root.mainloop()
-
