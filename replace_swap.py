@@ -12,11 +12,19 @@ for filename in os.listdir(input_folder):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(gray, 1.1, 4)
 
-    if len(faces) >= 2:
-        (x1, y1, w1, h1), (x2, y2, w2, h2) = faces[0], faces[1]
-        face1 = np.copy(img[y1:y1+h1, x1:x1+w1])
-        face2 = cv2.resize(np.copy(img[y2:y2+h2, x2:x2+w2]), (w1, h1))
-        img[y1:y1+h1, x1:x1+w1] = face2
-        img[y2:y2+h2, x2:x2+w2] = cv2.resize(face1, (w2, h2))
+    if len(faces) < 2:
+        raise ValueError(f"Image {filename} contains less than 2 faces, face swap cannot be performed")
+    else:
+        face_images = []
+        for (x, y, w, h) in faces:
+            face = np.copy(img[y:y+h, x:x+w])
+            face_images.append((face, x, y, w, h))
+
+        # Swap faces
+        for i in range(len(face_images)):
+            face, x, y, w, h = face_images[i]
+            next_face, _, _, next_w, next_h = face_images[(i+1)%len(face_images)]  # Get the next face in the list
+            resized_face = cv2.resize(next_face, (w, h))
+            img[y:y+h, x:x+w] = resized_face
 
     cv2.imwrite(os.path.join(output_folder, filename), img)
