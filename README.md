@@ -1,58 +1,54 @@
-# Face Anonymization Scripts
+# Python Face Anonymization Scripts
 
-This repository contains Python scripts for six different methods of face anonymization:
+This project includes six Python scripts for various face anonymization techniques. These scripts can anonymize faces in images using blurring, black bars, pixelation, face swapping, emoji replacement, and eye color replacement.
 
-1. **Black Bar:** This script detects faces in images and overlays a black rectangle over each detected face.
+Each script can operate in two modes:
 
-2. **Pixelate:** This script detects faces in images and pixelates the region of each detected face.
+1. General anonymization: In this mode, all faces in each image will be anonymized.
+2. Person-specific anonymization: In this mode, only the faces of a specific individual will be anonymized. The individual is specified by providing one or more images of the person. If the specified individual is not found in the image, no anonymization is applied.
 
-3. **Blur:** This script detects faces in images and applies a blur effect over each detected face.
-
-4. **Face Swap:** This script detects faces in images and swaps the faces. If there is only one face, it throws an error. It can handle multiple faces in the image.
-
-5. **Emoji:** This script detects faces in images and replaces each face with an emoji.
-
-6. **Eye Color:** This script detects faces in images and changes the eye color to the average color of the face.
-
-Each script reads images from a specified input directory, applies the face anonymization method, and writes the anonymized images to a specified output directory.
-
-## Dependencies
-
-These scripts depend on several Python libraries, including OpenCV, Pillow, NumPy, and Tkinter. Some scripts also require the Dlib library and a pre-trained facial landmark predictor model file.
-
-You can install the dependencies with pip:
-
-```
-pip install opencv-python-headless pillow numpy tkinter dlib
-```
-
-You can download the pre-trained model file from [here](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2). Remember to decompress the downloaded file to get the `.dat` file, and place it in the same directory as your script.
-
+## Prerequisites
+- Python 3.8 or later
+- OpenCV (cv2)
+- numpy
+- tkinter
 
 ## Scripts
 
-* `replace_black_bar.py`: Detects faces and places black bars over them.
-* `replace_pixel.py`: Detects faces and pixelates them.
-* `replace_rect_blur.py`: Detects faces and adds a Gaussian blur over them.
-* `replace_swap.py`: Detects faces and swaps all the faces in each image.
-* `replace_emoji.py`: Detects faces and replaces them with a specified emoji.
-* `replace_eyes_pixels.py`: Detects faces and replaces the eyes with pixels of the same color as the average color of the face.
+### 1. anonymize_blur.py
+This script applies a Gaussian blur to anonymize faces in the images.
 
-  
-## Usage
+### 2. anonymize_black_bar.py
+This script places a black bar over detected faces in the images.
 
-There is a GUI application that lets you select which face anonymization method to use, and which directories to use for input and output. You can run the application with the command:
+### 3. anonymize_pixelate.py
+This script pixelates the faces detected in the images for anonymization.
 
+### 4. anonymize_swap.py
+This script swaps faces detected in the images. This script only works when there are at least two faces in the image.
+
+### 5. anonymize_emoji.py
+This script replaces the faces detected in the images with a default emoji.
+
+### 6. anonymize_eye_color.py
+This script replaces the eyes with pixels of the same color as the average color of the face.
+
+Each script takes two mandatory arguments - input_folder and output_folder - and an optional third argument - person_folder. The input_folder is the directory from where the script will read the images, the output_folder is where it will write the anonymized images. The person_folder is the optional directory containing images of the specific person to be anonymized.
+
+## How to Run the Scripts
+```shell
+python <script_name> input_folder output_folder [person_folder]
 ```
+Replace `<script_name>` with the name of the script you wish to run, `input_folder` with the directory containing your input images, `output_folder` with the directory where you want the output images to be saved, and `person_folder` (if provided) with the directory containing one or more images of the specific person to be anonymized.
+
+For example:
+```shell
+python anonymize_blur.py ./input/ ./output/ ./person/
+```
+
+## GUI Application
+In addition to the scripts, a GUI application is provided for a more user-friendly experience. The application allows the user to select an anonymization method from a dropdown menu, specify the input and output folders, and optionally specify a folder containing images of a specific person to anonymize. The application can be run with the following command:
+
+```shell
 python app.py
 ```
-
-In the GUI, you can select the face anonymization method from the drop-down menu, select the input and output directories by clicking the "Select input folder" and "Select output folder" buttons, respectively, and start the face anonymization process by clicking the "Run script" button.
-
-
-## Limitations and Future Work
-
-These scripts are intended to serve as simple examples of face anonymization. They may not work well in all situations or for all images, especially in cases of non-frontal or partially occluded faces, faces with different expressions or accessories, or low-quality images.
-
-Future work could include improving the face detection and anonymization techniques, supporting different image formats and color spaces, and adding more face anonymization methods.
-
