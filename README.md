@@ -13,6 +13,16 @@ Each script can operate in two modes:
 - numpy
 - tkinter
 
+## Dependencies
+
+These scripts depend on several Python libraries, including OpenCV, Pillow, NumPy, and Tkinter. Some scripts also require the Dlib library and a pre-trained facial landmark predictor model file.
+
+You can install the dependencies with pip:
+
+`pip install opencv-python-headless pillow numpy tkinter dlib`
+
+You can download the pre-trained model file from here. Remember to decompress the downloaded file to get the .dat file, and place it in the same directory as your script.
+
 ## Scripts
 
 ### 1. anonymize_blur.py
