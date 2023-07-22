@@ -1,31 +1,33 @@
 # Face Anonymization Scripts
 
-This repository contains six Python scripts for anonymizing faces in images using various techniques. The scripts use OpenCV for face detection and various methods for anonymization. 
+This repository contains Python scripts for six different methods of face anonymization:
 
-## Requirements
+1. **Black Bar:** This script detects faces in images and overlays a black rectangle over each detected face.
 
-* OpenCV
-* Python 3.6 or higher
-* Numpy (if not already installed with OpenCV)
-* PIL (Pillow)
+2. **Pixelate:** This script detects faces in images and pixelates the region of each detected face.
 
-You can install the requirements with pip:
+3. **Blur:** This script detects faces in images and applies a blur effect over each detected face.
+
+4. **Face Swap:** This script detects faces in images and swaps the faces. If there is only one face, it throws an error. It can handle multiple faces in the image.
+
+5. **Emoji:** This script detects faces in images and replaces each face with an emoji.
+
+6. **Eye Color:** This script detects faces in images and changes the eye color to the average color of the face.
+
+Each script reads images from a specified input directory, applies the face anonymization method, and writes the anonymized images to a specified output directory.
+
+## Dependencies
+
+These scripts depend on several Python libraries, including OpenCV, Pillow, NumPy, and Tkinter. Some scripts also require the Dlib library and a pre-trained facial landmark predictor model file.
+
+You can install the dependencies with pip:
 
 ```
-pip install opencv-python numpy pillow
+pip install opencv-python-headless pillow numpy tkinter dlib
 ```
 
-## Usage
+You can download the pre-trained model file from [here](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2). Remember to decompress the downloaded file to get the `.dat` file, and place it in the same directory as your script.
 
-The scripts process all images in the specified `input_folder` and write the anonymized images to the corresponding `output_folder`. 
-
-To run a script:
-
-```
-python <script_name>.py
-```
-
-Ensure that the input and output folders are correctly specified in each script. 
 
 ## Scripts
 
@@ -36,12 +38,21 @@ Ensure that the input and output folders are correctly specified in each script.
 * `replace_emoji.py`: Detects faces and replaces them with a specified emoji.
 * `replace_eyes_pixels.py`: Detects faces and replaces the eyes with pixels of the same color as the average color of the face.
 
-## Notes
+  
+## Usage
 
-These scripts are simplified and might not work perfectly in all situations. Some scripts might fail to handle edge cases, such as images with no faces or images where the faces are not in the 'frontal' position. You can adjust the parameters of the face and eye detection to better suit your needs. For more complex tasks, such as accurate face swapping, you might need to use deep learning techniques. 
+There is a GUI application that lets you select which face anonymization method to use, and which directories to use for input and output. You can run the application with the command:
 
-## License
+```
+python app.py
+```
 
-These scripts are provided under the MIT License. See `LICENSE` for more details.
+In the GUI, you can select the face anonymization method from the drop-down menu, select the input and output directories by clicking the "Select input folder" and "Select output folder" buttons, respectively, and start the face anonymization process by clicking the "Run script" button.
 
-Remember to update the `<script_name>.py` with the appropriate script you want to run and make sure you have all the necessary dependencies installed on your system.
+
+## Limitations and Future Work
+
+These scripts are intended to serve as simple examples of face anonymization. They may not work well in all situations or for all images, especially in cases of non-frontal or partially occluded faces, faces with different expressions or accessories, or low-quality images.
+
+Future work could include improving the face detection and anonymization techniques, supporting different image formats and color spaces, and adding more face anonymization methods.
+
