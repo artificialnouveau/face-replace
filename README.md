@@ -21,7 +21,7 @@ You can install the dependencies with pip:
 
 `pip install opencv-python-headless pillow numpy tkinter dlib`
 
-You can download the pre-trained model file from here. Remember to decompress the downloaded file to get the .dat file, and place it in the same directory as your script.
+If you do not have shape_predictor_68_face_landmarks.dat in your folder, run python download_face_landmarks.py
 
 ## Scripts
 
