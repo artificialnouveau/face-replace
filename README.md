@@ -32,7 +32,7 @@ Ensure that the input and output folders are correctly specified in each script.
 * `replace_black_bar.py`: Detects faces and places black bars over them.
 * `replace_pixel.py`: Detects faces and pixelates them.
 * `replace_rect_blur.py`: Detects faces and adds a Gaussian blur over them.
-* `replace_swap.py`: Detects faces and swaps the first two faces in each image.
+* `replace_swap.py`: Detects faces and swaps all the faces in each image.
 * `replace_emoji.py`: Detects faces and replaces them with a specified emoji.
 * `replace_eyes_pixels.py`: Detects faces and replaces the eyes with pixels of the same color as the average color of the face.
 
